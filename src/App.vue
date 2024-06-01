@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import wordList from "an-array-of-english-words";
 
 import InputText from "primevue/inputtext";
@@ -13,7 +13,7 @@ const input = ref("");
 const inputRef = ref();
 
 onMounted(() => {
-  document.addEventListener('paste', disablePaste)
+  document.addEventListener("paste", disablePaste);
 
   init();
 
@@ -21,19 +21,19 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener('paste', disablePaste)
-})
+  document.removeEventListener("paste", disablePaste);
+});
 
 const init = () => {
   for (let i = 0; i < 50; i++) {
     const index = Math.floor(Math.random() * wordList.length);
     words.value.push(wordList[index]);
   }
-}
+};
 
 const disablePaste = (event) => {
   event.preventDefault();
-}
+};
 
 const handleInput = (event) => {
   const pressedKey = event.data;
@@ -44,8 +44,11 @@ const handleInput = (event) => {
     isInvalidWord.value = false;
   }
 
-  if (event.inputType === "deleteContentBackward" && currentWord.startsWith(input.value)) {
-    currentCharacterIndex.value = input.value.length
+  if (
+    event.inputType === "deleteContentBackward" &&
+    currentWord.startsWith(input.value)
+  ) {
+    currentCharacterIndex.value = input.value.length;
     return;
   }
 
@@ -76,9 +79,9 @@ const handleInput = (event) => {
 
   <main>
     <div class="mt-20 flex">
-      <div class="flex w-full flex-col">
+      <div class="mx-auto flex flex-col">
         <div
-          class="mx-auto flex h-[205px] w-[1000px] flex-wrap gap-2 overflow-hidden break-words bg-[#343434] p-2 text-2xl"
+          class="mx-auto flex h-[205px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words bg-[#343434] p-2 text-2xl"
         >
           <div v-for="(word, wIdx) in words">
             <span
@@ -93,7 +96,7 @@ const handleInput = (event) => {
             </span>
           </div>
         </div>
-        <div class="mx-auto mt-4 w-[1000px]">
+        <div class="mt-4">
           <InputText
             v-model="input"
             @input="handleInput"
