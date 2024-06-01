@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import {onBeforeUnmount, onMounted, ref} from "vue";
 import wordList from "an-array-of-english-words";
 
 import InputText from "primevue/inputtext";
@@ -13,13 +13,27 @@ const input = ref("");
 const inputRef = ref();
 
 onMounted(() => {
+  document.addEventListener('paste', disablePaste)
+
+  init();
+
+  inputRef.value.$el.focus();
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('paste', disablePaste)
+})
+
+const init = () => {
   for (let i = 0; i < 50; i++) {
     const index = Math.floor(Math.random() * wordList.length);
     words.value.push(wordList[index]);
   }
+}
 
-  inputRef.value.$el.focus();
-});
+const disablePaste = (event) => {
+  event.preventDefault();
+}
 
 const handleInput = (event) => {
   const pressedKey = event.data;
