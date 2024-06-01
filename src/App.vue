@@ -1,8 +1,10 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import {computed, onBeforeUnmount, onMounted, ref} from "vue";
 import wordList from "an-array-of-english-words";
 
 import InputText from "primevue/inputtext";
+
+const TIMER_SECONDS = 10;
 
 const words = ref([]);
 const currentWordIndex = ref(0);
@@ -12,12 +14,13 @@ const isInvalidWord = ref(false);
 const input = ref("");
 const inputRef = ref();
 
+const timerCount = ref(TIMER_SECONDS);
+const timerStarted = ref(false);
+
 onMounted(() => {
   document.addEventListener("paste", disablePaste);
 
   init();
-
-  inputRef.value.$el.focus();
 });
 
 onBeforeUnmount(() => {
@@ -25,10 +28,22 @@ onBeforeUnmount(() => {
 });
 
 const init = () => {
+  words.value = [];
+  currentWordIndex.value = 0;
+  currentCharacterIndex.value = 0;
+  isInvalidWord.value = false;
+
+  input.value = '';
+
+  timerCount.value = TIMER_SECONDS;
+  timerStarted.value = false;
+
   for (let i = 0; i < 50; i++) {
     const index = Math.floor(Math.random() * wordList.length);
     words.value.push(wordList[index]);
   }
+
+  inputRef.value.$el.focus();
 };
 
 const disablePaste = (event) => {
@@ -39,6 +54,20 @@ const handleInput = (event) => {
   const pressedKey = event.data;
   const currentWord = words.value[currentWordIndex.value];
   const currentChar = currentWord[currentCharacterIndex.value];
+
+  if (!timerStarted.value) {
+    timerStarted.value = true;
+
+    setInterval(() => {
+      if (timerCount.value > 0 && timerStarted.value) {
+        timerCount.value--;
+      }
+    }, 1000)
+  }
+
+  if (timerCount.value <= 0) {
+    return;
+  }
 
   if (currentWord.startsWith(input.value)) {
     isInvalidWord.value = false;
@@ -64,6 +93,12 @@ const handleInput = (event) => {
     isInvalidWord.value = true;
   }
 };
+
+const formatCounterTime = computed(() => {
+  const minutes = Math.floor(timerCount.value / 60);
+  const seconds = timerCount.value % 60;
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+})
 </script>
 
 <template>
@@ -81,7 +116,7 @@ const handleInput = (event) => {
     <div class="mt-20 flex">
       <div class="mx-auto flex flex-col">
         <div
-          class="mx-auto flex h-[205px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words bg-[#343434] p-2 text-2xl"
+          class="mx-auto flex h-[205px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
         >
           <div v-for="(word, wIdx) in words">
             <span
@@ -96,14 +131,28 @@ const handleInput = (event) => {
             </span>
           </div>
         </div>
-        <div class="mt-4">
-          <InputText
-            v-model="input"
-            @input="handleInput"
-            ref="inputRef"
-            class="w-full bg-[#343434] text-white focus:border-red-100"
-            :class="{ invalid: isInvalidWord }"
-          />
+        <div class="mt-4 flex h-[75px] gap-5">
+          <div class="h-full flex-grow self-center">
+            <InputText
+              v-model="input"
+              @input="handleInput"
+              ref="inputRef"
+              class="h-full w-full bg-[#343434] text-3xl text-white focus:border-red-100"
+              :class="{ invalid: isInvalidWord }"
+            />
+          </div>
+          <div class="self-center rounded-md bg-[#343434] p-4 text-3xl">
+            0 WPM
+          </div>
+          <div class="self-center rounded-md bg-[#343434] p-4 text-3xl">
+            0 CPM
+          </div>
+          <div class="self-center rounded-md bg-[#343434] p-4 text-3xl">
+            {{formatCounterTime}}
+          </div>
+          <button @click="init" class="self-center rounded-md bg-[#343434] p-4">
+            <span class="pi pi-undo"></span>
+          </button>
         </div>
       </div>
     </div>
