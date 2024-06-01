@@ -112,7 +112,7 @@ const formatCounterTime = computed(() => {
   <header>
     <div class="flex">
       <div class="mx-auto my-14">
-        <h1 class="text-4xl">
+        <h1 class="text-center text-4xl">
           10 Fast Fingers <span class="text-red-300">extreme</span>
         </h1>
       </div>
