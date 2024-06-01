@@ -111,7 +111,7 @@ const formatCounterTime = computed(() => {
 <template>
   <header>
     <div class="flex">
-      <div class="mx-auto mt-10">
+      <div class="mx-auto my-14">
         <h1 class="text-4xl">
           10 Fast Fingers <span class="text-red-300">extreme</span>
         </h1>
@@ -120,7 +120,7 @@ const formatCounterTime = computed(() => {
   </header>
 
   <main>
-    <div class="mt-20 flex p-3">
+    <div class="flex p-3">
       <div class="mx-auto flex flex-col">
         <div
           class="mx-auto flex h-[205px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
