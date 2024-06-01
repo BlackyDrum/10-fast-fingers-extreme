@@ -30,6 +30,11 @@ const handleInput = (event) => {
     isInvalidWord.value = false;
   }
 
+  if (event.inputType === "deleteContentBackward" && currentWord.startsWith(input.value)) {
+    currentCharacterIndex.value = input.value.length
+    return;
+  }
+
   if (currentChar === pressedKey && !isInvalidWord.value) {
     currentCharacterIndex.value++;
     if (currentCharacterIndex.value === currentWord.length) {
@@ -38,7 +43,7 @@ const handleInput = (event) => {
 
       input.value = "";
     }
-  } else {
+  } else if (!currentWord.startsWith(input.value)) {
     isInvalidWord.value = true;
   }
 };
@@ -79,8 +84,8 @@ const handleInput = (event) => {
             v-model="input"
             @input="handleInput"
             ref="inputRef"
-            class="w-full focus:border-red-100 bg-[#343434] text-white"
-            :class="{'invalid' : isInvalidWord}"
+            class="w-full bg-[#343434] text-white focus:border-red-100"
+            :class="{ invalid: isInvalidWord }"
           />
         </div>
       </div>
@@ -89,7 +94,8 @@ const handleInput = (event) => {
 </template>
 
 <style>
-.invalid:focus, .invalid {
+.invalid:focus,
+.invalid {
   border-color: #ff0000;
   outline: none;
 }
