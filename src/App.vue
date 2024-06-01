@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onBeforeUnmount, onMounted, ref} from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import wordList from "an-array-of-english-words";
 
 import InputText from "primevue/inputtext";
@@ -16,6 +16,7 @@ const inputRef = ref();
 
 const timerCount = ref(TIMER_SECONDS);
 const timerStarted = ref(false);
+const intervals = ref([]);
 
 onMounted(() => {
   document.addEventListener("paste", disablePaste);
@@ -33,10 +34,14 @@ const init = () => {
   currentCharacterIndex.value = 0;
   isInvalidWord.value = false;
 
-  input.value = '';
+  input.value = "";
 
   timerCount.value = TIMER_SECONDS;
   timerStarted.value = false;
+  intervals.value.forEach((interval) => {
+    clearInterval(interval);
+  });
+  intervals.value = [];
 
   for (let i = 0; i < 50; i++) {
     const index = Math.floor(Math.random() * wordList.length);
@@ -58,11 +63,13 @@ const handleInput = (event) => {
   if (!timerStarted.value) {
     timerStarted.value = true;
 
-    setInterval(() => {
+    const interval = setInterval(() => {
       if (timerCount.value > 0 && timerStarted.value) {
         timerCount.value--;
       }
-    }, 1000)
+    }, 1000);
+
+    intervals.value.push(interval);
   }
 
   if (timerCount.value <= 0) {
@@ -97,8 +104,8 @@ const handleInput = (event) => {
 const formatCounterTime = computed(() => {
   const minutes = Math.floor(timerCount.value / 60);
   const seconds = timerCount.value % 60;
-  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-})
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+});
 </script>
 
 <template>
@@ -113,7 +120,7 @@ const formatCounterTime = computed(() => {
   </header>
 
   <main>
-    <div class="mt-20 flex">
+    <div class="mt-20 flex p-3">
       <div class="mx-auto flex flex-col">
         <div
           class="mx-auto flex h-[205px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
@@ -131,26 +138,35 @@ const formatCounterTime = computed(() => {
             </span>
           </div>
         </div>
-        <div class="mt-4 flex h-[75px] gap-5">
-          <div class="h-full flex-grow self-center">
+        <div class="mt-4 flex h-[60px] gap-5 max-lg:flex-col">
+          <div class="h-full grow self-center max-lg:w-full">
             <InputText
               v-model="input"
               @input="handleInput"
               ref="inputRef"
-              class="h-full w-full bg-[#343434] text-3xl text-white focus:border-red-100"
+              class="h-full w-full bg-[#343434] text-xl text-white focus:border-red-100"
               :class="{ invalid: isInvalidWord }"
             />
           </div>
-          <div class="self-center rounded-md bg-[#343434] p-4 text-3xl">
+          <div
+            class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
+          >
             0 WPM
           </div>
-          <div class="self-center rounded-md bg-[#343434] p-4 text-3xl">
+          <div
+            class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
+          >
             0 CPM
           </div>
-          <div class="self-center rounded-md bg-[#343434] p-4 text-3xl">
-            {{formatCounterTime}}
+          <div
+            class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
+          >
+            {{ formatCounterTime }}
           </div>
-          <button @click="init" class="self-center rounded-md bg-[#343434] p-4">
+          <button
+            @click="init"
+            class="self-center rounded-md bg-[#343434] p-3 max-lg:w-1/2"
+          >
             <span class="pi pi-undo"></span>
           </button>
         </div>
