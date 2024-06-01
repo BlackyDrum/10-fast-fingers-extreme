@@ -30,7 +30,6 @@ const handleInput = (event) => {
     isInvalidWord.value = false;
   }
 
-
   if (currentChar === pressedKey && !isInvalidWord.value) {
     currentCharacterIndex.value++;
     if (currentCharacterIndex.value === currentWord.length) {
@@ -39,7 +38,7 @@ const handleInput = (event) => {
 
       input.value = "";
     }
-  } else if (pressedKey !== null) {
+  } else {
     isInvalidWord.value = true;
   }
 };
@@ -80,10 +79,18 @@ const handleInput = (event) => {
             v-model="input"
             @input="handleInput"
             ref="inputRef"
-            class="w-full bg-[#343434] text-white"
+            class="w-full focus:border-red-100 bg-[#343434] text-white"
+            :class="{'invalid' : isInvalidWord}"
           />
         </div>
       </div>
     </div>
   </main>
 </template>
+
+<style>
+.invalid:focus, .invalid {
+  border-color: #ff0000;
+  outline: none;
+}
+</style>
