@@ -61,11 +61,18 @@ const init = () => {
 const initObserver = () => {
   const targetNode = document.body;
 
-  const config = { attributes: true, subtree: true, attributeFilter: ['class'] };
+  const config = {
+    attributes: true,
+    subtree: true,
+    attributeFilter: ["class"],
+  };
 
   const callback = (mutationsList) => {
     for (const mutation of mutationsList) {
-      if (mutation.type === 'attributes' && mutation.target.classList.contains('highlighted')) {
+      if (
+        mutation.type === "attributes" &&
+        mutation.target.classList.contains("highlighted")
+      ) {
         handleClassChange();
       }
     }
@@ -77,10 +84,10 @@ const initObserver = () => {
   onBeforeUnmount(() => {
     observer.disconnect();
   });
-}
+};
 
 const handleClassChange = () => {
-  const highlightedElement = document.getElementsByClassName('highlighted')[0];
+  const highlightedElement = document.getElementsByClassName("highlighted")[0];
   if (highlightedElement) {
     const currentCharElementOffsetTop = highlightedElement.offsetTop;
     // 8px because margin is also included in 'offsetTop'
@@ -162,7 +169,9 @@ const formatCounterTime = computed(() => {
 
 const calculateAccuracy = computed(() => {
   const correctChars = totalCharacterCount.value - wrongCharacterCount.value;
-  return totalCharacterCount.value > 0 ? Math.round((correctChars / totalCharacterCount.value) * 100) : 100;
+  return totalCharacterCount.value > 0
+    ? Math.round((correctChars / totalCharacterCount.value) * 100)
+    : 100;
 });
 </script>
 
@@ -181,14 +190,14 @@ const calculateAccuracy = computed(() => {
     <div class="flex p-3">
       <div class="mx-auto flex flex-col">
         <div
-          class="mx-auto relative flex h-[160px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
+          class="relative mx-auto flex h-[160px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
         >
           <div v-for="(word, wIdx) in words">
             <span
               v-for="(char, cIdx) in word"
               class="mx-[1px]"
               :class="{
-                'highlighted':
+                highlighted:
                   wIdx === currentWordIndex && cIdx === currentCharacterIndex,
               }"
             >
@@ -215,7 +224,7 @@ const calculateAccuracy = computed(() => {
           <div
             class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
           >
-            {{calculateAccuracy}} Accuracy
+            {{ calculateAccuracy }} Accuracy
           </div>
           <div
             class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
@@ -243,6 +252,6 @@ const calculateAccuracy = computed(() => {
 
 .highlighted {
   border-width: 1px;
-  background-color: #6B7280;
+  background-color: #6b7280;
 }
 </style>
