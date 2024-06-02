@@ -20,6 +20,7 @@ const intervals = ref([]);
 
 const totalCharacterCount = ref(0);
 const wrongCharacterCount = ref(0);
+const correctWordCount = ref(0);
 
 onMounted(() => {
   init();
@@ -49,6 +50,7 @@ const init = () => {
 
   totalCharacterCount.value = 0;
   wrongCharacterCount.value = 0;
+  correctWordCount.value = 0;
 
   for (let i = 0; i < 30; i++) {
     const index = Math.floor(Math.random() * wordList.length);
@@ -147,6 +149,7 @@ const handleInput = (event) => {
   if (currentChar === pressedKey && !isInvalidWord.value) {
     currentCharacterIndex.value++;
     if (currentCharacterIndex.value === currentWord.length) {
+      correctWordCount.value++;
       currentWordIndex.value++;
       currentCharacterIndex.value = 0;
 
@@ -172,6 +175,11 @@ const calculateAccuracy = computed(() => {
   return totalCharacterCount.value > 0
     ? Math.round((correctChars / totalCharacterCount.value) * 100)
     : 100;
+});
+
+const calculateWPM = computed(() => {
+  const minutesElapsed = (TIMER_SECONDS - timerCount.value) / 60;
+  return minutesElapsed > 0 ? Math.round((correctWordCount.value / minutesElapsed)) : 0;
 });
 </script>
 
@@ -219,7 +227,7 @@ const calculateAccuracy = computed(() => {
           <div
             class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
           >
-            0 WPM
+            {{calculateWPM}} WPM
           </div>
           <div
             class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
