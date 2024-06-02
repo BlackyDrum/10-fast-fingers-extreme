@@ -28,3 +28,5 @@ To set up the project locally, follow these steps:
     ```bash
     npm run dev
     ```
+
+4. **Visit http://localhost:5173 to access the application**
