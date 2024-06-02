@@ -22,9 +22,10 @@ const totalCharacterCount = ref(0);
 const wrongCharacterCount = ref(0);
 
 onMounted(() => {
-  document.addEventListener("paste", disablePaste);
-
   init();
+  initObserver();
+
+  document.addEventListener("paste", disablePaste);
 });
 
 onBeforeUnmount(() => {
@@ -49,12 +50,50 @@ const init = () => {
   totalCharacterCount.value = 0;
   wrongCharacterCount.value = 0;
 
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 30; i++) {
     const index = Math.floor(Math.random() * wordList.length);
     words.value.push(wordList[index]);
   }
 
   inputRef.value.$el.focus();
+};
+
+const initObserver = () => {
+  const targetNode = document.body;
+
+  const config = { attributes: true, subtree: true, attributeFilter: ['class'] };
+
+  const callback = (mutationsList) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'attributes' && mutation.target.classList.contains('highlighted')) {
+        handleClassChange();
+      }
+    }
+  };
+
+  const observer = new MutationObserver(callback);
+  observer.observe(targetNode, config);
+
+  onBeforeUnmount(() => {
+    observer.disconnect();
+  });
+}
+
+const handleClassChange = () => {
+  const highlightedElement = document.getElementsByClassName('highlighted')[0];
+  if (highlightedElement) {
+    const currentCharElementOffsetTop = highlightedElement.offsetTop;
+    // 8px because margin is also included in 'offsetTop'
+    if (currentCharElementOffsetTop > 8) {
+      words.value = words.value.slice(currentWordIndex.value);
+      currentWordIndex.value = 0;
+
+      for (let i = 0; i < 10; i++) {
+        const index = Math.floor(Math.random() * wordList.length);
+        words.value.push(wordList[index]);
+      }
+    }
+  }
 };
 
 const disablePaste = (event) => {
@@ -142,14 +181,14 @@ const calculateAccuracy = computed(() => {
     <div class="flex p-3">
       <div class="mx-auto flex flex-col">
         <div
-          class="mx-auto flex h-[205px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
+          class="mx-auto relative flex h-[160px] max-w-[1000px] flex-wrap gap-2 overflow-hidden break-words rounded-md bg-[#343434] p-2 text-2xl"
         >
           <div v-for="(word, wIdx) in words">
             <span
               v-for="(char, cIdx) in word"
               class="mx-[1px]"
               :class="{
-                'border bg-gray-600':
+                'highlighted':
                   wIdx === currentWordIndex && cIdx === currentCharacterIndex,
               }"
             >
@@ -200,5 +239,10 @@ const calculateAccuracy = computed(() => {
 .invalid {
   border-color: #ff0000;
   outline: none;
+}
+
+.highlighted {
+  border-width: 1px;
+  background-color: #6B7280;
 }
 </style>
