@@ -4,7 +4,7 @@ import wordList from "an-array-of-english-words";
 
 import InputText from "primevue/inputtext";
 
-const TIMER_SECONDS = 10;
+const TIMER_SECONDS = 60;
 
 const words = ref([]);
 const currentWordIndex = ref(0);
@@ -17,6 +17,9 @@ const inputRef = ref();
 const timerCount = ref(TIMER_SECONDS);
 const timerStarted = ref(false);
 const intervals = ref([]);
+
+const totalCharacterCount = ref(0);
+const wrongCharacterCount = ref(0);
 
 onMounted(() => {
   document.addEventListener("paste", disablePaste);
@@ -42,6 +45,9 @@ const init = () => {
     clearInterval(interval);
   });
   intervals.value = [];
+
+  totalCharacterCount.value = 0;
+  wrongCharacterCount.value = 0;
 
   for (let i = 0; i < 50; i++) {
     const index = Math.floor(Math.random() * wordList.length);
@@ -88,6 +94,10 @@ const handleInput = (event) => {
     return;
   }
 
+  if (event.inputType !== "deleteContentBackward") {
+    totalCharacterCount.value++;
+  }
+
   if (currentChar === pressedKey && !isInvalidWord.value) {
     currentCharacterIndex.value++;
     if (currentCharacterIndex.value === currentWord.length) {
@@ -98,6 +108,10 @@ const handleInput = (event) => {
     }
   } else if (!currentWord.startsWith(input.value)) {
     isInvalidWord.value = true;
+
+    if (event.inputType !== "deleteContentBackward") {
+      wrongCharacterCount.value++;
+    }
   }
 };
 
@@ -105,6 +119,11 @@ const formatCounterTime = computed(() => {
   const minutes = Math.floor(timerCount.value / 60);
   const seconds = timerCount.value % 60;
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+});
+
+const calculateAccuracy = computed(() => {
+  const correctChars = totalCharacterCount.value - wrongCharacterCount.value;
+  return totalCharacterCount.value > 0 ? Math.round((correctChars / totalCharacterCount.value) * 100) : 100;
 });
 </script>
 
@@ -157,7 +176,7 @@ const formatCounterTime = computed(() => {
           <div
             class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
           >
-            0 CPM
+            {{calculateAccuracy}} Accuracy
           </div>
           <div
             class="self-center rounded-md bg-[#343434] p-3 text-3xl max-lg:w-full"
