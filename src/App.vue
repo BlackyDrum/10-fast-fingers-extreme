@@ -52,10 +52,7 @@ const init = () => {
   wrongCharacterCount.value = 0;
   correctWordCount.value = 0;
 
-  for (let i = 0; i < 30; i++) {
-    const index = Math.floor(Math.random() * wordList.length);
-    words.value.push(wordList[index]);
-  }
+  addWords(30);
 
   inputRef.value.$el.focus();
 };
@@ -97,13 +94,17 @@ const handleClassChange = () => {
       words.value = words.value.slice(currentWordIndex.value);
       currentWordIndex.value = 0;
 
-      for (let i = 0; i < 10; i++) {
-        const index = Math.floor(Math.random() * wordList.length);
-        words.value.push(wordList[index]);
-      }
+      addWords(10)
     }
   }
 };
+
+const addWords = (count) => {
+  for (let i = 0; i < count; i++) {
+    const index = Math.floor(Math.random() * wordList.length);
+    words.value.push(wordList[index]);
+  }
+}
 
 const disablePaste = (event) => {
   event.preventDefault();
