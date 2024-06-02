@@ -217,6 +217,7 @@ const calculateWPM = computed(() => {
         <div class="mt-4 flex h-[60px] gap-5 max-lg:flex-col">
           <div class="h-full grow self-center max-lg:w-full">
             <InputText
+              id="input"
               v-model="input"
               @input="handleInput"
               ref="inputRef"
