@@ -146,6 +146,7 @@ const formatCounterTime = computed(() => {
               ref="inputRef"
               class="h-full w-full bg-[#343434] text-xl text-white focus:border-red-100"
               :class="{ invalid: isInvalidWord }"
+              :disabled="timerCount <= 0"
             />
           </div>
           <div
