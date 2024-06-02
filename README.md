@@ -1,6 +1,6 @@
 # 10 Fast Fingers extreme
 
-A typing speed test application, built with Vite.
+A typing speed test application, built with Vue and Vite.
 
 ## Demo
 
