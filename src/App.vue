@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import wordList from "an-array-of-english-words";
 
 import InputText from "primevue/inputtext";
@@ -21,6 +21,8 @@ const intervals = ref([]);
 const totalCharacterCount = ref(0);
 const wrongCharacterCount = ref(0);
 const correctWordCount = ref(0);
+
+const defaultOffsetTop = ref(0);
 
 onMounted(() => {
   init();
@@ -55,6 +57,10 @@ const init = () => {
   addWords(30);
 
   inputRef.value.$el.focus();
+
+  nextTick(() => {
+    defaultOffsetTop.value = document.getElementsByClassName("highlighted")[0].offsetTop;
+  })
 };
 
 const initObserver = () => {
@@ -88,9 +94,7 @@ const initObserver = () => {
 const handleClassChange = () => {
   const highlightedElement = document.getElementsByClassName("highlighted")[0];
   if (highlightedElement) {
-    const currentCharElementOffsetTop = highlightedElement.offsetTop;
-    // 8px because margin is also included in 'offsetTop'
-    if (currentCharElementOffsetTop > 8) {
+    if (highlightedElement.offsetTop > defaultOffsetTop.value) {
       words.value = words.value.slice(currentWordIndex.value);
       currentWordIndex.value = 0;
 
